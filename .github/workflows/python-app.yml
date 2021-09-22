@@ -1,0 +1,37 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Start jksb
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '37 16,20,22 * * *'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Start jksb Direct.
+      env:
+        user_id: ${{secrets.user_id}}
+        user_pd: ${{secrets.user_pd}}
+        mail_id: ${{secrets.mail_id}}
+        mail_pd: ${{secrets.mail_pd}}
+        mail_target: ${{secrets.mail_target}}
+        city_code: ${{secrets.city_code}}
+        location: ${{secrets.location}}
+        real_name: ${{secrets.real_name}}
+      run: |
+        python Application.py "$user_id" "&user_pd" "$mail_id" "$mail_pd" "$mail_target" "$city_code" "$location" "$realname"
