@@ -34,4 +34,5 @@ jobs:
         location: ${{secrets.location}}
         real_name: ${{secrets.real_name}}
       run: |
+        sed -i 's/MinProtocol = TLSv1.2/MinProtocol = TLSv1.0/' /etc/ssl/openssl.cnf
         python Application.py "$user_id" "&user_pd" "$mail_id" "$mail_pd" "$mail_target" "$city_code" "$location" "$realname"
