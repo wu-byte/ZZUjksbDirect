@@ -80,7 +80,7 @@ try:
 except requests.exceptions.SSLError:
     result = ''
     result_flag = False
-    print("requests.exceptions.SSLError，可能与无法联系到jksb服务器有关，详细问题报告到邮箱.")
+    print("requests.exceptions.SSLError，可能与无法联系到jksb服务器或secrets配置有误有关，详细问题报告到邮箱.")
 
 # 分析上报结果
 if "感谢你今日上报" in result:
@@ -111,9 +111,10 @@ if not result_flag:
                       'final_header': header,
                       'out_log_ln56': out_log_ln56,
                       'ln56_tried_calc': tried_calc,
-                      'real_name': real_name
+                      # 'real_name': real_name,
+                      # 'ags_input': [sys.argv[0:]]
                       }
-    # result = result.replace(real_name, "喵喵喵")
+    result = result.replace(real_name, "喵喵喵")
     # 配置邮件内容
     message = MIMEText(str(this_time_vars) + result, 'plain', 'utf-8')
     message['Subject'] = public_mail_config['title']
