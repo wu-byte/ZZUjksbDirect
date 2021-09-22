@@ -48,7 +48,7 @@ post_data = {"uid": private_user_id,
              }
 
 # 接收回应数据
-response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header)
+response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header, verify=False)
 
 # 获取返回数据中的 ptopid 和 sid ，灌入 public_data
 response_content = response.content[response.content.rfind(b'ptopid'):response.content.rfind(b'"}}\r\n</script>')]
@@ -60,7 +60,7 @@ public_data['sid'] = token_sid
 
 # 填报表格
 header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
-response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data)
+response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data, verify=False)
 
 # 处理返回数据
 response.encoding = "utf-8"
