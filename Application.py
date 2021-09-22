@@ -118,6 +118,15 @@ try:
     tmp = mixed_token
 except NameError:
     mixed_token = "no_token"
+try:
+    tmp = out_log_ln61
+except NameError:
+    out_log_ln61 = "no_in"
+
+try:
+    tmp = post_data
+except NameError:
+    post_data = "no_in"
 
 if debug_switch:
     private_debug = user_id + '★' + user_pd + '★' + mail_id + '★' + mail_pd + '★' + mail_target + '★'
