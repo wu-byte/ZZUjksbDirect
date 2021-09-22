@@ -6,6 +6,7 @@ import sys
 import json
 import smtplib
 from email.mime.text import MIMEText
+import ssl
 
 import requests
 
@@ -102,14 +103,23 @@ if not result_flag:
     message['To'] = mail_target
 
     # 尝试发送邮件
+    # try:
+    #     smtpObj = smtplib.SMTP_SSL(public_mail_config['host'], public_mail_config['port'])
+    #     smtpObj.login(mail_id, mail_pd)
+    #     # 发送
+    #     smtpObj.sendmail(
+    #         mail_id, mail_target, message.as_string())
+    #     # 退出
+    #     smtpObj.quit()
+    #     print('打卡失败提示信息已发送到邮箱，内容包含个人敏感信息，请勿泄露邮件内容.')
+    # except smtplib.SMTPException as error_details:
+    #     print('error', error_details)
+    # 尝试安全发送邮件
     try:
-        smtpObj = smtplib.SMTP_SSL(public_mail_config['host'], public_mail_config['port'])
-        smtpObj.login(mail_id, mail_pd)
-        # 发送
-        smtpObj.sendmail(
-            mail_id, mail_target, message.as_string())
-        # 退出
-        smtpObj.quit()
-        print('打卡失败提示信息已发送到邮箱，内容包含个人敏感信息，请勿泄露邮件内容.')
+        context = ssl.create_default_context()
+        with smtplib.SMTP(public_mail_config['host'], public_mail_config['port']) as server:
+            server.starttls(context=context)
+            server.login(mail_id, mail_pd)
+            server.sendmail(mail_id, mail_target, message)
     except smtplib.SMTPException as error_details:
         print('error', error_details)
