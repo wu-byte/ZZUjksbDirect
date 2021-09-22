@@ -34,4 +34,4 @@ jobs:
         location: ${{secrets.location}}
         real_name: ${{secrets.real_name}}
       run: |
-        python Application.py "$user_id" "&user_pd" "$mail_id" "$mail_pd" "$mail_target" "$city_code" "$location" "$realname"
+        python Application.py "$user_id &user_pd $mail_id $mail_pd $mail_target $city_code $location $realname"
