@@ -147,7 +147,7 @@ if not result_flag:
         public_mail_config = json.load(file_obj)
         file_obj.close()
     # 配置邮件内容
-    message = MIMEText(str(this_time_vars) + result, 'plain', 'utf-8')
+    message = MIMEText(str(this_time_vars), 'plain', 'utf-8')
     message['Subject'] = public_mail_config['title']
     message['From'] = mail_id
     message['To'] = mail_target
