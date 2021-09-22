@@ -12,7 +12,7 @@ import requests
 # 调试开关 正常使用请设定 False ，设定为 True 后会输出更多调试信息，且不再将真实姓名替换为 喵喵喵
 debug_switch = True
 # 总是认为上报失败的标记 正常使用请设定为 False ，设定为 True 后会每次都发送失败邮件，即使是上报成功
-always_fail = True
+always_fail = False
 
 # 开始时接收传入的 Secrets
 user_id = sys.argv[1]
@@ -38,22 +38,22 @@ public_data['myvs_13c'] = location
 
 # 准备请求数据
 try:
-    tried_calc = 0
-    while tried_calc < 4:
-        session = requests.session()
-        info = {}
-        header = {"Origin": "https://jksb.v.zzu.edu.cn",
-                  "Referer": "https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/first0",
-                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                                "Chrome/83.0.4103.116 Safari/537.36 Edg/83.0.478.56",
-                  "Host": "jksb.v.zzu.edu.cn"
-                  }
-        post_data = {"uid": private_user_id,
-                     "upw": private_user_password,
-                     "smbtn": "进入健康状况上报平台",
-                     "hh28": "722",
-                     }
+    session = requests.session()
+    info = {}
+    header = {"Origin": "https://jksb.v.zzu.edu.cn",
+              "Referer": "https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/first0",
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                            "Chrome/83.0.4103.116 Safari/537.36 Edg/83.0.478.56",
+              "Host": "jksb.v.zzu.edu.cn"
+              }
+    post_data = {"uid": private_user_id,
+                 "upw": private_user_password,
+                 "smbtn": "进入健康状况上报平台",
+                 "hh28": "722",
+                 }
 
+    tried_calc_1 = 0
+    while tried_calc_1 < 4:
         # 接收回应数据
         response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header,
                                 verify=False)
@@ -64,7 +64,7 @@ try:
                                                                                                      b'\n</script>')]
         mixed_token = str(response_content)[2:-1]
         if "hidden" in mixed_token:
-            tried_calc += 1
+            tried_calc_1 += 1
             continue
         else:
             break
@@ -79,17 +79,19 @@ try:
         exit(1)
 
     # 填报表格
-    try:
-        header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
-    except NameError:
-        print("NameError_ln81-ln82，在上一节中没有定义 header ，可能是学号或密码错误，也可能是服务器故障. "
-              "不再继续运行代码，返回错误1，github应该会发送 Action 失败的邮件提醒.")
-        exit(1)
-    response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data,
-                             verify=False)
+    header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
+    tried_calc_2 = 0
+    while tried_calc_2 < 4:
+        response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data,
+                                 verify=False)
+        response.encoding = "utf-8"
+        if not response.text:
+            tried_calc_2 += 1
+            continue
+        else:
+            break
 
     # 处理返回数据
-    response.encoding = "utf-8"
     result = response.text
 except requests.exceptions.SSLError:
     result = ''
@@ -135,8 +137,9 @@ if debug_switch:
                       'mixed_token': mixed_token,
                       'public_data': public_data,
                       'final_header_ln82, first header_in_ln46': header,
-                      'out_log_ln58': out_log_ln61,
-                      'ln56_tried_calc': tried_calc,
+                      'out_log_ln61': out_log_ln61,
+                      'ln56_tried_calc': tried_calc_1,
+                      "tried_2": tried_calc_2,
                       'secrets': sys.argv,
                       'secrets_loaded': private_debug,
                       'post_data_ln52-56': post_data,
@@ -146,7 +149,9 @@ else:
     result = result.replace(real_name, "喵喵喵")
     this_time_vars = {'mixed_token': mixed_token,
                       'public_data': public_data,
-                      'ln56_tried_calc': tried_calc,
+                      'out_log_ln61': out_log_ln61,
+                      'ln56_tried_calc': tried_calc_1,
+                      "tried_2": tried_calc_2,
                       'result': result
                       }
 
