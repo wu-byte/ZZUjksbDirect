@@ -114,6 +114,11 @@ else:
 if always_fail:
     result_flag = False
 # 调试信息详略分支
+try:
+    tmp = mixed_token
+except NameError:
+    mixed_token = "no_token"
+
 if debug_switch:
     private_debug = user_id + '★' + user_pd + '★' + mail_id + '★' + mail_pd + '★' + mail_target + '★'
     private_debug = private_debug + city_code + '★' + location + '★' + real_name
