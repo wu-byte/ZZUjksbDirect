@@ -34,48 +34,52 @@ public_data['myvs_13b'] = city_code
 public_data['myvs_13c'] = location
 
 # 准备请求数据
-tried_calc = 0
-while tried_calc < 4:
-    session = requests.session()
-    info = {}
-    header = {"Origin": "https://jksb.v.zzu.edu.cn",
-              "Referer": "https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/first0",
-              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                            "Chrome/83.0.4103.116 Safari/537.36 Edg/83.0.478.56",
-              "Host": "jksb.v.zzu.edu.cn"
-              }
-    post_data = {"uid": private_user_id,
-                 "upw": private_user_password,
-                 "smbtn": "进入健康状况上报平台",
-                 "hh28": "722",
-                 }
+try:
+    tried_calc = 0
+    while tried_calc < 4:
+        session = requests.session()
+        info = {}
+        header = {"Origin": "https://jksb.v.zzu.edu.cn",
+                  "Referer": "https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/first0",
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                                "Chrome/83.0.4103.116 Safari/537.36 Edg/83.0.478.56",
+                  "Host": "jksb.v.zzu.edu.cn"
+                  }
+        post_data = {"uid": private_user_id,
+                     "upw": private_user_password,
+                     "smbtn": "进入健康状况上报平台",
+                     "hh28": "722",
+                     }
 
-    # 接收回应数据
-    response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header, verify=False)
+        # 接收回应数据
+        response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header, verify=False)
+        response.encoding = "utf-8"
+        out_log_ln56 = response.text
+        # 获取返回数据中的 ptopid 和 sid ，灌入 public_data
+        response_content = response.content[response.content.rfind(b'ptopid'):response.content.rfind(b'"}}\r\n</script>')]
+        mixed_token = str(response_content)[2:-1]
+        if "hidden" in mixed_token:
+            tried_calc += 1
+            continue
+        else:
+            break
+
+    token_ptopid = mixed_token[7:mixed_token.rfind('&sid=')]
+    token_sid = mixed_token[mixed_token.rfind('&sid=')+5:]
+
+    public_data['ptopid'] = token_ptopid
+    public_data['sid'] = token_sid
+
+    # 填报表格
+    header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
+    response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data, verify=False)
+
+    # 处理返回数据
     response.encoding = "utf-8"
-    out_log_ln56 = response.text
-    # 获取返回数据中的 ptopid 和 sid ，灌入 public_data
-    response_content = response.content[response.content.rfind(b'ptopid'):response.content.rfind(b'"}}\r\n</script>')]
-    mixed_token = str(response_content)[2:-1]
-    if "hidden" in mixed_token:
-        tried_calc += 1
-        continue
-    else:
-        break
-
-token_ptopid = mixed_token[7:mixed_token.rfind('&sid=')]
-token_sid = mixed_token[mixed_token.rfind('&sid=')+5:]
-
-public_data['ptopid'] = token_ptopid
-public_data['sid'] = token_sid
-
-# 填报表格
-header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
-response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data, verify=False)
-
-# 处理返回数据
-response.encoding = "utf-8"
-result = response.text
+    result = response.text
+except requests.exceptions.SSLError:
+    result_flag = False
+    print("requests.exceptions.SSLError，可能与无法联系到jksb服务器有关，详细问题报告到邮箱.")
 
 # 分析上报结果
 if "感谢你今日上报" in result:
@@ -105,6 +109,7 @@ if not result_flag:
                       'public_data': public_data,
                       'final_header': header,
                       'out_log_ln56': out_log_ln56,
+                      'ln56_tried_calc': tried_calc,
                       'real_name': real_name
                       }
     # result = result.replace(real_name, "喵喵喵")
