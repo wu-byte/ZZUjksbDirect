@@ -103,7 +103,7 @@ if not result_flag:
 
     # 尝试发送邮件
     try:
-        smtpObj = smtplib.SMTP_SSL(public_mail_config['host'], public_mail_config['port'])
+        smtpObj = smtplib.SMTP_SSL(public_mail_config['host'], public_mail_config['port'], context="TLS")
         smtpObj.login(mail_id, mail_pd)
         # 发送
         smtpObj.sendmail(
