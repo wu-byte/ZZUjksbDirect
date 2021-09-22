@@ -6,7 +6,6 @@ import sys
 import json
 import smtplib
 from email.mime.text import MIMEText
-import ssl
 
 import requests
 
@@ -49,7 +48,7 @@ post_data = {"uid": private_user_id,
              }
 
 # 接收回应数据
-response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header, verify=False)
+response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header)
 
 # 获取返回数据中的 ptopid 和 sid ，灌入 public_data
 response_content = response.content[response.content.rfind(b'ptopid'):response.content.rfind(b'"}}\r\n</script>')]
@@ -61,7 +60,7 @@ public_data['sid'] = token_sid
 
 # 填报表格
 header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
-response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data, verify=False)
+response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data)
 
 # 处理返回数据
 response.encoding = "utf-8"
@@ -103,23 +102,14 @@ if not result_flag:
     message['To'] = mail_target
 
     # 尝试发送邮件
-    # try:
-    #     smtpObj = smtplib.SMTP_SSL(public_mail_config['host'], public_mail_config['port'])
-    #     smtpObj.login(mail_id, mail_pd)
-    #     # 发送
-    #     smtpObj.sendmail(
-    #         mail_id, mail_target, message.as_string())
-    #     # 退出
-    #     smtpObj.quit()
-    #     print('打卡失败提示信息已发送到邮箱，内容包含个人敏感信息，请勿泄露邮件内容.')
-    # except smtplib.SMTPException as error_details:
-    #     print('error', error_details)
-    # 尝试安全发送邮件
     try:
-        context = ssl.create_default_context()
-        with smtplib.SMTP(public_mail_config['host'], public_mail_config['port']) as server:
-            server.starttls(context=context)
-            server.login(mail_id, mail_pd)
-            server.sendmail(mail_id, mail_target, message)
+        smtpObj = smtplib.SMTP_SSL(public_mail_config['host'], public_mail_config['port'])
+        smtpObj.login(mail_id, mail_pd)
+        # 发送
+        smtpObj.sendmail(
+            mail_id, mail_target, message.as_string())
+        # 退出
+        smtpObj.quit()
+        print('打卡失败提示信息已发送到邮箱，内容包含个人敏感信息，请勿泄露邮件内容.')
     except smtplib.SMTPException as error_details:
         print('error', error_details)

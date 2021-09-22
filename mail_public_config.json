@@ -1,5 +1,5 @@
 {
-  "host": "smtp.gamil.com",
-  "port": "587",
+  "host": "mail.v.zzu.edu.cn",
+  "port": "465",
   "title": "jksbDirect Problems"
 }
