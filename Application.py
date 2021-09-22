@@ -78,6 +78,7 @@ try:
     response.encoding = "utf-8"
     result = response.text
 except requests.exceptions.SSLError:
+    result = ''
     result_flag = False
     print("requests.exceptions.SSLError，可能与无法联系到jksb服务器有关，详细问题报告到邮箱.")
 
