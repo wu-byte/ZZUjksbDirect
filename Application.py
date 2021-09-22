@@ -94,7 +94,7 @@ if not result_flag:
                       'public_data': public_data,
                       'final_header': header
                       }
-    result = result.replace(real_name, "喵喵喵")
+    # result = result.replace(real_name, "喵喵喵")
     # 配置邮件内容
     message = MIMEText(str(this_time_vars) + result, 'plain', 'utf-8')
     message['Subject'] = public_mail_config['title']
