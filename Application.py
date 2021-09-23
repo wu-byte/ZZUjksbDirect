@@ -39,6 +39,7 @@ step_1_state = False
 step_2_calc = 0
 step_2_output = False
 step_2_state = False
+result = 0
 result_flag = 0
 response = False
 mixed_token = False
