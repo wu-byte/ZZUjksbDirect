@@ -126,7 +126,8 @@ step_2_data = {'day6': 'b',
 while step_1_calc < 4:
     try:
         # 接收回应数据
-        response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header)
+        response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header,
+                                verify=False)
         if type(response) == requests.models.Response:
             response.encoding = "utf-8"
             step_1_output = response.text
