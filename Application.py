@@ -135,7 +135,7 @@ while step_1_calc < 4:
                 public_data['sid'] = token_sid
                 break
         else:
-            if step_1_calc < 4:
+            if step_1_calc < 3:
                 step_1_calc += 1
                 print("获取 token 中" + str(step_1_calc)
                       + "次失败，没有response，可能学校服务器故障，或者学号或密码有误，请检查返回邮件信息.")
@@ -145,7 +145,7 @@ while step_1_calc < 4:
                       + "次失败，没有response，可能学校服务器故障，或者学号或密码有误，次数达到预期，终止本次打卡，报告失败情况.")
                 report_mail(debug_switch)
     except requests.exceptions.SSLError:
-        if step_1_calc < 4:
+        if step_1_calc < 3:
             step_1_calc += 1
             print("获取 token 中" + str(step_1_calc)
                   + "次失败，服务器提示SSLError，可能与连接问题有关.")
@@ -171,7 +171,7 @@ while step_2_calc < 4:
                       + "次失败，次数达到预期，终止本次打卡，报告失败情况.")
                 report_mail(debug_switch)
         else:
-            if step_2_calc < 4:
+            if step_2_calc < 3:
                 step_2_calc += 1
                 print("填报表格中" + str(step_2_calc)
                       + "次失败，没有response，可能学校服务器故障，或者学号或密码有误，请检查返回邮件信息.")
@@ -181,7 +181,7 @@ while step_2_calc < 4:
                       + "次失败，没有response，可能学校服务器故障，次数达到预期，终止本次打卡，报告失败情况.")
                 report_mail(debug_switch)
     except requests.exceptions.SSLError:
-        if step_2_calc < 4:
+        if step_2_calc < 3:
             step_2_calc += 1
             print("填报表格中" + str(step_2_calc)
                   + "次失败，服务器提示SSLError，可能与连接问题有关.")
