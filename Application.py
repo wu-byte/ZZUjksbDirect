@@ -53,6 +53,7 @@ try:
                  }
 
     tried_calc_1 = 0
+    response = False
     while tried_calc_1 < 4:
         # 接收回应数据
         response = session.post("https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/login", data=post_data, headers=header,
@@ -66,6 +67,9 @@ try:
         if "hidden" in mixed_token:
             tried_calc_1 += 1
             continue
+        elif not mixed_token:
+            tried_calc_1 += 1
+            continue
         else:
             break
     try:
@@ -77,21 +81,34 @@ try:
         print("NameError_ln70-ln74，可能是学号或密码错误，也可能是服务器故障. 不再继续运行代码，"
               "返回错误1，github应该会发送 Action 失败的邮件提醒.")
         exit(1)
-    code_1 = response.status_code
+    try:
+        code_1 = response.status_code
+    except NameError:
+        try:
+            code_1 = response
+        except NameError:
+            code_1 = "NotExist"
 
     # 填报表格
     header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
     tried_calc_2 = 0
+    response = False
     while tried_calc_2 < 4:
         response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data,
                                  verify=False)
         response.encoding = "utf-8"
-        if response.status_code != 200:
+        try:
+            code_2 = response.status_code
+        except NameError:
+            try:
+                code_2 = response
+            except NameError:
+                code_2 = False
+        if not code_2:
             tried_calc_2 += 1
             continue
         else:
             break
-    code_2 = response.status_code
 
     # 处理返回数据
     result = response.text
