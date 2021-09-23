@@ -161,7 +161,7 @@ header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
 # response = False
 while step_2_calc < 4:
     try:
-        response = requests.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data, verify=False)
+        response = session.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data, verify=False)
         if type(response) == requests.models.Response:
             response.encoding = "utf-8"
             step_2_output = response.text
