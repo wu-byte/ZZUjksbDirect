@@ -12,7 +12,7 @@ import requests
 # 调试开关 正常使用请设定 False ，设定为 True 后会输出更多调试信息，且不再将真实姓名替换为 喵喵喵
 debug_switch = True
 # 总是认为上报失败的标记 正常使用请设定为 False ，设定为 True 后会每次都发送失败邮件，即使是上报成功
-always_fail = True
+always_fail = False
 
 # 开始时接收传入的 Secrets
 user_id = sys.argv[1]
@@ -39,6 +39,9 @@ step_1_state = False
 step_2_calc = 0
 step_2_output = False
 step_2_state = False
+step_3_calc = 0
+step_3_output = False
+step_3_state = False
 result = 0
 result_flag = 0
 response = False
@@ -58,6 +61,9 @@ def report_mail(full_info=debug_switch):
                           'step_2_output': step_2_output,
                           'step_2_calc': step_2_calc,
                           'step_2_state': step_2_state,
+                          'step_3_output': step_3_output,
+                          'step_3_calc': step_3_calc,
+                          'step_3_state': step_3_state,
                           'secrets_inputted': sys.argv,
                           'step_1_post_data': post_data,
                           'result': result
@@ -71,6 +77,8 @@ def report_mail(full_info=debug_switch):
                           'step_2_output': step_2_output,
                           'step_2_calc': step_2_calc,
                           'step_2_state': step_2_state,
+                          'step_3_calc': step_3_calc,
+                          'step_3_state': step_3_state,
                           'step_1_post_data': post_data,
                           'result': replaced_result
                           }
@@ -109,6 +117,10 @@ post_data = {"uid": user_id,
              "smbtn": "进入健康状况上报平台",
              "hh28": "722",
              }
+step_2_data = {'day6': 'b',
+               'did': '1',
+               'men6': 'a'
+               }
 
 # 第一步 获取 token
 while step_1_calc < 4:
@@ -133,7 +145,9 @@ while step_1_calc < 4:
                 token_sid = mixed_token[mixed_token.rfind('&sid=') + 5:]
                 step_1_state = True
                 public_data['ptopid'] = token_ptopid
+                step_2_data['ptopid'] = token_ptopid
                 public_data['sid'] = token_sid
+                step_2_data['sid'] = token_sid
                 break
         else:
             if step_1_calc < 3:
@@ -156,44 +170,82 @@ while step_1_calc < 4:
                   + "次失败，服务器提示SSLError，次数达到预期，终止本次打卡，报告失败情况.")
             report_mail(debug_switch)
 
-# 第二步 填报表格
+# 第二步 提交填报人
 header["Referer"] = 'https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb'
 # response = False
 while step_2_calc < 4:
     try:
-        response = session.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data, verify=False)
+        response = session.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=step_2_data,
+                                verify=False)
         if type(response) == requests.models.Response:
             response.encoding = "utf-8"
             step_2_output = response.text
-            if "感谢你今日上报" in step_2_output:
+            if "发热" in step_2_output:
                 break
             elif "无权" in step_2_output:
-                print("填报表格中" + str(step_2_calc)
-                      + "次失败，次数达到预期，终止本次打卡，报告失败情况.")
+                print("提交填报人" + str(step_2_calc)
+                      + "次失败，可能是学号或密码有误，终止本次打卡，报告失败情况.")
                 report_mail(debug_switch)
         else:
             if step_2_calc < 3:
                 step_2_calc += 1
-                print("填报表格中" + str(step_2_calc)
+                print("提交填报人" + str(step_2_calc)
                       + "次失败，没有response，可能学校服务器故障，或者学号或密码有误，请检查返回邮件信息.")
                 continue
             else:
-                print("填报表格中" + str(step_2_calc)
+                print("提交填报人" + str(step_2_calc)
                       + "次失败，没有response，可能学校服务器故障，次数达到预期，终止本次打卡，报告失败情况.")
                 report_mail(debug_switch)
     except requests.exceptions.SSLError:
         if step_2_calc < 3:
             step_2_calc += 1
-            print("填报表格中" + str(step_2_calc)
+            print("提交填报人" + str(step_2_calc)
                   + "次失败，服务器提示SSLError，可能与连接问题有关.")
             continue
         else:
-            print("填报表格中" + str(step_2_calc)
+            print("提交填报人" + str(step_2_calc)
+                  + "次失败，服务器提示SSLError，次数达到预期，终止本次打卡，报告失败情况.")
+            report_mail(debug_switch)
+
+
+# 第三步 提交表格
+# response = False
+while step_3_calc < 4:
+    try:
+        response = session.post('https://jksb.v.zzu.edu.cn/vls6sss/zzujksb.dll/jksb', headers=header, data=public_data,
+                                verify=False)
+        if type(response) == requests.models.Response:
+            response.encoding = "utf-8"
+            step_3_output = response.text
+            if "感谢你今日上报" in step_3_output:
+                break
+            elif "无权" in step_3_output:
+                print("填报表格中" + str(step_3_calc)
+                      + "次失败，次数达到预期，终止本次打卡，报告失败情况.")
+                report_mail(debug_switch)
+        else:
+            if step_3_calc < 3:
+                step_3_calc += 1
+                print("填报表格中" + str(step_3_calc)
+                      + "次失败，没有response，可能学校服务器故障，或者学号或密码有误，请检查返回邮件信息.")
+                continue
+            else:
+                print("填报表格中" + str(step_3_calc)
+                      + "次失败，没有response，可能学校服务器故障，次数达到预期，终止本次打卡，报告失败情况.")
+                report_mail(debug_switch)
+    except requests.exceptions.SSLError:
+        if step_3_calc < 3:
+            step_3_calc += 1
+            print("填报表格中" + str(step_3_calc)
+                  + "次失败，服务器提示SSLError，可能与连接问题有关.")
+            continue
+        else:
+            print("填报表格中" + str(step_3_calc)
                   + "次失败，服务器提示SSLError，次数达到预期，终止本次打卡，报告失败情况.")
             report_mail(debug_switch)
 
 # 分析上报结果
-result = step_2_output
+result = step_3_output
 if "感谢你今日上报" in result:
     result_flag = True
     print("上报成功")
