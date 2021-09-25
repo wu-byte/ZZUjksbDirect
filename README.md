@@ -3,10 +3,8 @@
 
 ![最后一次Action运行标记](https://github.com/ClokMuch/ZZUjksbDirect/workflows/Start%20jksb/badge.svg)
 [![GPL Licence](https://badges.frapsoft.com/os/gpl/gpl.svg?v=103)](https://opensource.org/licenses/GPL-3.0/)
-[![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
+[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
-
-**目前项目将首次运行，运行测试成功后将删除调试标记和这句话**
 
 郑州大学健康上报/打卡的自动实现，本方法不再使用无头浏览器模拟登入，而是使用更直接的方式进行，并且更新了可用性.
 
