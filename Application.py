@@ -69,7 +69,8 @@ def report_mail(full_info=debug_switch):
                           'result': result
                           }
     else:
-        replaced_result = result.replace(real_name, "喵喵喵")
+        if type(result) == str:
+            replaced_result = result.replace(real_name, "喵喵喵")
         this_time_vars = {'result_flag': result_flag,
                           'step_1_output': step_1_output,
                           'step_1_calc': step_1_calc,
