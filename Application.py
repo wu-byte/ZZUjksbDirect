@@ -82,7 +82,6 @@ def report_mail(full_info=debug_switch):
                           'step_2_state': step_2_state,
                           'step_3_calc': step_3_calc,
                           'step_3_state': step_3_state,
-                          'step_1_post_data': post_data,
                           'result': replaced_result
                           }
     with open("mail_public_config.json", 'rb') as file_obj_inner:
