@@ -189,6 +189,10 @@ while step_2_calc < 4:
                 print("提交填报人" + str(step_2_calc)
                       + "次失败，可能是学号或密码有误，终止本次打卡，报告失败情况.")
                 report_mail(debug_switch)
+            elif "验证码" in step_2_output:
+                print("提交填报人" + str(step_2_calc)
+                      + "次失败，服务器返回需要验证码，可能是请求过于频繁，终止本次打卡，报告失败情况.")
+                report_mail(debug_switch)
             else:
                 print("提交填报人" + str(step_2_calc)
                       + "次失败，返回内容在 else ，原因未知，终止本次打卡，报告失败情况.")
