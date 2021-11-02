@@ -189,6 +189,10 @@ while step_2_calc < 4:
                 print("提交填报人" + str(step_2_calc)
                       + "次失败，可能是学号或密码有误，终止本次打卡，报告失败情况.")
                 report_mail(debug_switch)
+            else:
+                print("提交填报人" + str(step_2_calc)
+                      + "次失败，返回内容在 else ，原因未知，终止本次打卡，报告失败情况.")
+                report_mail(debug_switch)
         else:
             if step_2_calc < 3:
                 step_2_calc += 1
@@ -222,9 +226,9 @@ while step_3_calc < 4:
             step_3_output = response.text
             if "感谢你今日上报" in step_3_output:
                 break
-            elif "无权" in step_3_output:
+            else:
                 print("填报表格中" + str(step_3_calc)
-                      + "次失败，次数达到预期，终止本次打卡，报告失败情况.")
+                      + "次失败，可能打卡平台增加了新内容，或是今日打卡结果已被审核而不能再修改，请检查返回邮件信息.")
                 report_mail(debug_switch)
         else:
             if step_3_calc < 3:
