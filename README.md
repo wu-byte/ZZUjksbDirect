@@ -32,7 +32,7 @@
 ![配置 Secrets](image_folder/step02.png)
 * 点击项目的`Settings`-->`Secrets`-->`New repository secret`，准备新建 Secrets；
 * 增加学号：在 Name 中输入 `user_id` ，在 Value 中输入您的学号，一般为连续的12位数字；
-* 增加密码：在 Name 中输入 `user_pd' ，在 Value 中输入您的密码，一般与登录查询成绩、健康上报打卡的密码一致；
+* 增加密码：在 Name 中输入 `user_pd` ，在 Value 中输入您的密码，一般与登录查询成绩、健康上报打卡的密码一致；
 * 增加省市：Name 输入 `city_code` , Value 输入您身份证号码**前4位**；
 * 增加具体位置：Name 输入 `location` ，Value 输入您的具体位置；
 * 增加发送邮箱的邮箱名：Name 输入`mail_id`，Value 输入您准备好发送消息邮箱，如果您使用学校邮箱输入即可，类似于：`polar10249620@stu.zzu.edu.cn` **注意：这是一个举例，并非真实的邮箱，如果您直接输入此邮箱，您将接收到错误信息**；
